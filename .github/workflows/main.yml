@@ -1,0 +1,44 @@
+name: PathPilot CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r pathpilot-backend/requirements.txt
+
+      - name: Run flake8 checker
+        run: |
+          pip install flake8
+          flake8 pathpilot-backend/ --max-line-length=100
+      
+      - name: Run Bandit
+        run: |
+          pip install bandit
+          bandit -r pathpilot-backend/ -11
+
+      - name: Run pytest
+        run: |
+          pip install pytest
+          pytest pathpilot-backend/ -v
+
+      - name: Build docker containers
+        run: |
+          docker compose build
