@@ -1,0 +1,17 @@
+# web framework for backend
+flask
+
+# https requests to usajobs api
+requests
+
+# loads env w/ API keys, etc.
+python-dotenv
+
+# test
+pytest
+
+# keeps code clean
+flake8
+
+# app security
+bandit
