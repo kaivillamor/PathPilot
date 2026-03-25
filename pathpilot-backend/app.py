@@ -116,4 +116,4 @@ def jobs():
 
 # port number you can change as long as it's also retroactively changed in the docker-compose.yml
 if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000)
