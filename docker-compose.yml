@@ -1,0 +1,9 @@
+services:
+  backend:
+    build: ./pathpilot-backend
+    ports:
+      - "5001:5000"
+    env_file:
+      - ./pathpilot-backend/.env
+    volumes:
+      - ./pathpilot-backend:/app
