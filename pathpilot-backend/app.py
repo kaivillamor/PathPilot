@@ -14,25 +14,41 @@ def home():
 @app.route("/jobs", methods=["GET"])
 def jobs():
     keyword = request.args.get("keyword", "")
-    
-    # usajobs api call
-    response = requests.get(
-        "https://data.usajobs.gov/api/search", 
-        headers = {
-            "User-Agent": os.getenv("USAJOBS_EMAIL"),
-            "Authorization-Key": os.getenv("USAJOBS_API_KEY")
-        },
-        params={
-            "Keyword": keyword,
-            "ResultsPerPage": 10
-        }
-    )
-    
-    # error check
-    if response.status_code != 200:
-        return jsonify({"error": "Failed to fetch"}), response.status_code
-    
-    return jsonify(response.json())
+    try:
+        # usajobs api call
+        usajobs_response = requests.get(
+            "https://data.usajobs.gov/api/search", 
+            headers = {
+                "User-Agent": os.getenv("USAJOBS_EMAIL"),
+                "Authorization-Key": os.getenv("USAJOBS_API_KEY")
+            },
+            params={
+                "Keyword": keyword,
+                "ResultsPerPage": 10
+            }
+        )
+        usajobs_data = usajobs_response.json()
+    except Exception as e:
+        usajobs_data = {"error": f"USAJobs API failed: {str(e)}"}
+
+    # theirstack api call
+    try:
+        theirstack_response = requests.get(
+            "https://api.theirstack.com/...",
+            headers = {
+                "Authorization": os.getenv("THEIRSTACK_API_KEY")
+            },
+            params = {
+                "keyword": keyword
+            }
+        )
+        theirstack_data = theirstack_response.json()
+    except Exception as e:
+        theirstack_data = {"error": f"TheirStack API failed: {str(e)}"}
+    return jsonify({
+        "federal_jobs": usajobs_data,
+        "private_jobs": theirstack_data
+    })
 
 # do not change the host (specific to Docker)
 # allows Flask to accept connections from anywhere including Docker's internals.
