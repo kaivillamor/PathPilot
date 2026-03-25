@@ -78,7 +78,8 @@ def jobs():
             params={
                 'JobCategoryCode': usajobs_series,
                 "ResultsPerPage": 10
-            }
+            },
+            timeout = 10
         )
         usajobs_data = usajobs_response.json()
     except Exception as e:
@@ -98,7 +99,8 @@ def jobs():
                 'posted_at_max_age_days': 30,
                 'limit': 10,
                 'page': 0
-            }
+            },
+            timeout = 10
         )
         theirstack_data = theirstack_response.json()
     except Exception as e:
