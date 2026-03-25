@@ -10,8 +10,5 @@ python-dotenv
 # test
 pytest
 
-# keeps code clean
-flake8
-
 # app security
 bandit
