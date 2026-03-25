@@ -32,7 +32,7 @@ jobs:
       - name: Run Bandit
         run: |
           pip install bandit
-          bandit -r pathpilot-backend/ -11
+          bandit -r pathpilot-backend/ -ll
 
       - name: Run pytest
         run: |
