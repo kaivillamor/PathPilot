@@ -78,7 +78,8 @@ def jobs():
             params={
                 'JobCategoryCode': usajobs_series,
                 "ResultsPerPage": 10
-            }
+            },
+            timeout = 10
         )
         usajobs_data = usajobs_response.json()
     except Exception as e:
@@ -98,7 +99,8 @@ def jobs():
                 'posted_at_max_age_days': 30,
                 'limit': 10,
                 'page': 0
-            }
+            },
+            timeout = 10
         )
         theirstack_data = theirstack_response.json()
     except Exception as e:
@@ -114,4 +116,4 @@ def jobs():
 
 # port number you can change as long as it's also retroactively changed in the docker-compose.yml
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=False, host="0.0.0.0", port=5000)
