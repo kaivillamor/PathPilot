@@ -20,4 +20,7 @@ Setup:
 
     copy the example .env file in pathpilot-backend
     create a new .env file and fill out based on the example.
-    Website to get request API key: https://developer.usajobs.gov/api-reference/
+    Website to request API keys: 
+       https://developer.usajobs.gov/api-reference/
+       https://theirstack.com/en/job-posting-api
+    
