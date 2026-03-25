@@ -27,7 +27,7 @@ jobs:
       - name: Run Bandit
         run: |
           pip install bandit
-          bandit -r pathpilot-backend/ -ll -s B201, B104
+          bandit -r pathpilot-backend/ -ll -s B201,B104
 
       - name: Run pytest
         run: |
