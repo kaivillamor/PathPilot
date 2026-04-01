@@ -30,13 +30,13 @@ def get_usajobs(usajobs_series):
                 # filtered to just title for now
                 # note: use get to avoid null breaking the app
                 "title": descriptor.get("PositionTitle"),
-                "Organization": descriptor.get("OrganizationName"),
+                "organization": descriptor.get("OrganizationName"),
                 "location": descriptor.get("PositionLocationDisplay"),
                 "salary_min": remuneration[0]["MinimumRange"] if remuneration else None,
                 "salary_max": remuneration[0]["MaximumRange"] if remuneration else None,
-                "Remote": remote.get("Details", {}).get("RemoteIndicator") if remote else None,
-                "ApplicationClose": descriptor.get("ApplicationCloseDate"),
-                "URL": url[0] if url else None
+                "remote": remote.get("Details", {}).get("RemoteIndicator") if remote else None,
+                "applicationclose": descriptor.get("ApplicationCloseDate"),
+                "url": url[0] if url else None
             })
         return filtered_usajobs
     except Exception as e:
