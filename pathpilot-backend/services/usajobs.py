@@ -23,7 +23,15 @@ def get_usajobs(usajobs_series):
             descriptor = job["MatchedObjectDescriptor"]
             filtered_usajobs.append({
                 # filtered to just title for now
-                "title": descriptor["PositionTitle"]
+                "title": descriptor["PositionTitle"],
+                "Organization": descriptor["OrganizationName"],
+                "location": descriptor["PositionLocationDisplay"],
+                "salary_min": descriptor["PositionRemuneration"][0]["MinimumRange"],
+                "salary_max": descriptor["PositionRemuneration"][0]["MaximumRange"],       
+                "Remote": descriptor["UserArea"]["Details"]["RemoteIndicator"],
+                "ApplicationClose": descriptor["ApplicationCloseDate"],
+                # Note the descriptor was ApplyURI instead of ApplyURL 
+                "URL": descriptor["ApplyURI"][0]
             })
         return filtered_usajobs
     except Exception as e:
