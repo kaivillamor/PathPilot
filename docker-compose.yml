@@ -7,3 +7,11 @@ services:
       - ./pathpilot-backend/.env
     volumes:
       - ./pathpilot-backend:/app
+  frontend:
+    build: ./pathpilot-frontend
+    ports:
+      - "5003:5000"
+    depends_on:
+      - backend
+    volumes:
+      - ./pathpilot-frontend:/app

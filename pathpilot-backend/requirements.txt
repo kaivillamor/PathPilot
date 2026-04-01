@@ -1,7 +1,7 @@
 # web framework for backend
 flask
 
-# https requests to usajobs api
+# https requests to usajobs api/theirstack
 requests
 
 # loads env w/ API keys, etc.
