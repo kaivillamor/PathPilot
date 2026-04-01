@@ -16,6 +16,7 @@ def get_usajobs(usajobs_series):
             },
             timeout = 10
         )
+        usajobs_response.raise_for_status()
         usajobs_filtered_data =  usajobs_response.json()
         usajobs = usajobs_filtered_data["SearchResult"]["SearchResultItems"]
         filtered_usajobs = []
