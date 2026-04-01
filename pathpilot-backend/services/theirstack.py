@@ -19,6 +19,21 @@ def get_theirstack(theirstack_title):
             },
             timeout = 10
         )
-        return theirstack_response.json()
+        theirstack_filtered_data = theirstack_response.json()
+        filtered_theirstackjobs = []
+        for job in theirstack_filtered_data["data"]:
+            filtered_theirstackjobs.append({
+                "title": job["job_title"],
+                "company": job["company"],
+                "location": job["location"],
+                "remote": job["remote"],
+                "salary_string": job["salary_string"],
+                "salary_min": job["min_annual_salary_usd"],
+                "salary_max": job["max_annual_salary_usd"],
+                "url": job["url"],
+                "date_posted": job["date_posted"],
+                "seniority": job["seniority"]
+            })
+        return filtered_theirstackjobs
     except Exception as e:
         return {"error": f"TheirStack API failed: {str(e)}"}
