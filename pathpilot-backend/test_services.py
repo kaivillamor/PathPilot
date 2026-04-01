@@ -42,7 +42,7 @@ def test_usajobs_missing_fields():
         }
         mock_get.return_value = mock_response
         result = get_usajobs("1550")
-        assert result[0]["title"]
+        assert result[0]["title"] is None
         assert result[0]["salary_min"] is None
         assert result[0]["remote"] is None
         assert result[0]["url"] is None
