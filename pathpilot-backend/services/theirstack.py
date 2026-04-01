@@ -19,6 +19,7 @@ def get_theirstack(theirstack_title):
             },
             timeout = 10
         )
+        theirstack_response.raise_for_status()
         theirstack_filtered_data = theirstack_response.json()
         filtered_theirstackjobs = []
         for job in theirstack_filtered_data["data"]:
