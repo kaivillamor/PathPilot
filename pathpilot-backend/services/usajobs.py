@@ -21,17 +21,21 @@ def get_usajobs(usajobs_series):
         filtered_usajobs = []
         for job in usajobs:
             descriptor = job["MatchedObjectDescriptor"]
+            remuneration = descriptor.get("PositionRemuneration")
+            remote = descriptor.get("UserArea")
+            # Note the descriptor was ApplyURI instead of ApplyURL 
+            url = descriptor.get("ApplyURI")
             filtered_usajobs.append({
                 # filtered to just title for now
-                "title": descriptor["PositionTitle"],
-                "Organization": descriptor["OrganizationName"],
-                "location": descriptor["PositionLocationDisplay"],
-                "salary_min": descriptor["PositionRemuneration"][0]["MinimumRange"],
-                "salary_max": descriptor["PositionRemuneration"][0]["MaximumRange"],       
-                "Remote": descriptor["UserArea"]["Details"]["RemoteIndicator"],
-                "ApplicationClose": descriptor["ApplicationCloseDate"],
-                # Note the descriptor was ApplyURI instead of ApplyURL 
-                "URL": descriptor["ApplyURI"][0]
+                # note: use get to avoid null breaking the app
+                "title": descriptor.get("PositionTitle"),
+                "Organization": descriptor.get("OrganizationName"),
+                "location": descriptor.get("PositionLocationDisplay"),
+                "salary_min": remuneration[0]["MinimumRange"] if remuneration else None,
+                "salary_max": remuneration[0]["MaximumRange"] if remuneration else None,
+                "Remote": remote.get("Details", {}).get("RemoteIndicator") if remote else None,
+                "ApplicationClose": descriptor.get("ApplicationCloseDate"),
+                "URL": url[0] if url else None
             })
         return filtered_usajobs
     except Exception as e:
