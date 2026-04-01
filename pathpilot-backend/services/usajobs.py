@@ -16,6 +16,15 @@ def get_usajobs(usajobs_series):
             },
             timeout = 10
         )
-        return usajobs_response.json()
+        usajobs_filtered_data =  usajobs_response.json()
+        usajobs = usajobs_filtered_data["SearchResult"]["SearchResultItems"]
+        filtered_usajobs = []
+        for job in usajobs:
+            descriptor = job["MatchedObjectDescriptor"]
+            filtered_usajobs.append({
+                # filtered to just title for now
+                "title": descriptor["PositionTitle"]
+            })
+        return filtered_usajobs
     except Exception as e:
         return {"error": f"USAJobs API failed: {str(e)}"}
