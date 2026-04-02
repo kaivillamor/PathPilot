@@ -12,3 +12,6 @@ pytest
 
 # app security (since it's public)
 bandit
+
+# python library for postgresql
+psycopg2-binary
