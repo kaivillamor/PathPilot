@@ -1,6 +1,7 @@
-from flask import Flask
+from flask import Flask, jsonify
 from dotenv import load_dotenv
 from routes.jobs import jobs_bp
+from metrics import metrics
 
 load_dotenv()
 
@@ -11,6 +12,10 @@ app.register_blueprint(jobs_bp)
 @app.route("/")
 def home():
     return "PathPilot web-app is running"
+
+@app.route("/metrics")
+def get_metrics():
+    return jsonify(metrics)
 
 # do not change the host (specific to Docker)
 # allows Flask to accept connections from anywhere including Docker's internals.

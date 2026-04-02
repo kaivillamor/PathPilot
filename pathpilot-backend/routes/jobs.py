@@ -1,6 +1,9 @@
 from flask import Blueprint, jsonify, request
 from services.usajobs import get_usajobs
 from services.theirstack import get_theirstack
+from metrics import metrics
+import time
+from datetime import datetime
 
 jobs_bp = Blueprint("jobs", __name__)
 
@@ -54,6 +57,7 @@ THEIRSTACK_DEGREE_MAPPING = {
 
 @jobs_bp.route("/jobs", methods=["GET"])
 def jobs():
+    start_time = time.time()
     degree = request.args.get('degree', '')
 
     if not degree:
@@ -67,6 +71,13 @@ def jobs():
     usajobs_data = get_usajobs(usajobs_series)
     theirstack_data = get_theirstack(theirstack_title)
 
+    if "error" in usajobs_data or "error" in theirstack_data:
+        metrics["error_count"].append(datetime.now().isoformat())
+
+    metrics["total_requests"].append(datetime.now().isoformat())
+    metrics["degree_searches"][degree] = metrics["degree_searches"].get(degree, 0) + 1
+    metrics["response_times"].append(time.time() - start_time)
+    
     return jsonify({
         "degree": degree,
         "federal_jobs": usajobs_data,

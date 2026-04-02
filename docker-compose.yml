@@ -15,3 +15,11 @@ services:
       - backend
     volumes:
       - ./pathpilot-frontend:/app
+  monitoring:
+    build: ./pathpilot-monitoring
+    ports:
+      - "5005:8050"
+    depends_on:
+      - backend
+    volumes:
+      - ./pathpilot-monitoring:/dashboard
