@@ -7,16 +7,8 @@ Need:
 
 Setup:
 1. Clone the repo
-2. Create the venv
-
-    python -m venv venv
-    source venv/bin/activate
-
-3. Install dependencies from requirements
-
-    pip install -r pathpilot-backend/requirements.txt
-
-4. Setup your env
+2. Install docker desktop
+3. Setup your env
 
     copy the example .env file in pathpilot-backend
     create a new .env file and fill out based on the example.
@@ -24,3 +16,6 @@ Setup:
        https://developer.usajobs.gov/api-reference/
        https://theirstack.com/en/job-posting-api
     
+4. Run docker compose up in your terminal
+5. Enter http://localhost:5003 in your searchbar (front-end not up yet) 
+   Use http://localhost:5001 for testing backend API
