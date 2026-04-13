@@ -1,9 +1,8 @@
 from flask import Blueprint, jsonify, request
 from services.usajobs import get_usajobs
 from services.theirstack import get_theirstack
-from metrics import metrics
+from metrics import log_request, log_error, log_degree_search, log_response_time
 import time
-from datetime import datetime
 
 jobs_bp = Blueprint("jobs", __name__)
 
@@ -72,11 +71,11 @@ def jobs():
     theirstack_data = get_theirstack(theirstack_title)
 
     if "error" in usajobs_data or "error" in theirstack_data:
-        metrics["error_count"].append(datetime.now().isoformat())
+        log_error()
 
-    metrics["total_requests"].append(datetime.now().isoformat())
-    metrics["degree_searches"][degree] = metrics["degree_searches"].get(degree, 0) + 1
-    metrics["response_times"].append(time.time() - start_time)
+    log_request()
+    log_degree_search(degree)
+    log_response_time(time.time() - start_time)
     
     return jsonify({
         "degree": degree,

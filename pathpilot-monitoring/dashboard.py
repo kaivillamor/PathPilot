@@ -4,8 +4,6 @@ from dash.dependencies import Input, Output
 import requests
 import plotly.graph_objects as go
 
-def get_db():
-    return sqlite3.connect(DB_PATH)
 
 app = dash.Dash(__name__)
 app.layout = html.Div([
@@ -28,20 +26,20 @@ def update_graphs(n):
     data = requests.get("http://backend:5000/metrics").json()
 
     response_times_figure = go.Figure(
-        go.Bar(
-            x = list(range(len(data["response_times"]))),
-            y = data["response_times"]
+        go.Scatter(
+            x = [r["time"] for r in data["response_times"]],
+            y = [r["value"] for r in data["response_times"]]
         )
     )
-    response_times_figure.update_layout(title = "response-times")
+    response_times_figure.update_layout(title = "Response Times")
 
     total_requests_figure = go.Figure(
-        go.Bar(
-            x = list(range(len(data["total_requests"]))),
-            y = data["total_requests"]
+        go.Indicator(
+            mode = "number",
+            value = data["total_requests"],
+            title = {"text": "Total Requests"}
         )
     )
-    total_requests_figure.update_layout(title = "total-requests")
 
     degree_figure = go.Figure(
         go.Bar(
@@ -52,12 +50,12 @@ def update_graphs(n):
     degree_figure.update_layout(title = "Degree Searches")
 
     error_count_figure = go.Figure(
-        go.Bar(
-            x = list(range(len(data["error_count"]))),
-            y = data["error_count"]
+        go.Indicator(
+            mode = "number",
+            value = data["error_count"],
+            title = {"text": "Error Count"}
         )
     )
-    error_count_figure.update_layout(title = "Error Count")
 
     return response_times_figure, total_requests_figure, degree_figure, error_count_figure
 
