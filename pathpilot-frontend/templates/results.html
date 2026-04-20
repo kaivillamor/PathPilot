@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}PlanPilot | Results{% endblock %}
+
+{% block content %}
+<section class="section results-hero">
+  <div class="container">
+    <p class="eyebrow">Generated from mock data</p>
+    <h1>Recommended degree path for Sean Johnson</h1>
+    <p class="lead narrow">
+      Based on 27 completed credits, preference for tech roles, and a goal to finish within
+      4 semesters, PlanPilot ranks the Cybersecurity A.A.S. as the best-fit program.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container card-grid two-up">
+    <article class="panel result-card accent-border">
+      <p class="label">Best-fit program</p>
+      <h2>Cybersecurity A.A.S.</h2>
+      <p>Confidence score: <strong>91%</strong></p>
+      <ul class="bullet-list">
+        <li>Builds on completed intro computing credits</li>
+        <li>Strong alignment with security and support roles</li>
+        <li>Can be completed by Spring 2027</li>
+      </ul>
+    </article>
+
+    <article class="panel result-card">
+      <p class="label">Alternative path</p>
+      <h2>Information Technology Certificate</h2>
+      <p>Confidence score: <strong>78%</strong></p>
+      <ul class="bullet-list">
+        <li>Shorter path to completion</li>
+        <li>Good for help desk and junior admin roles</li>
+        <li>Lower long-term salary ceiling</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<section class="section muted-section">
+  <div class="container">
+    <div class="section-heading">
+      <p class="eyebrow">Semester-by-semester</p>
+      <h2>Suggested course plan</h2>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item panel">
+        <h3>Fall 2026</h3>
+        <p>CS 201, SEC 115, NET 210, ENG 102</p>
+      </div>
+
+      <div class="timeline-item panel">
+        <h3>Spring 2027</h3>
+        <p>SEC 220, DB 205, MATH 115, Humanities Elective</p>
+      </div>
+
+      <div class="timeline-item panel">
+        <h3>Summer 2027</h3>
+        <p>Internship, Security Lab, Capstone Prep</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-heading">
+      <p class="eyebrow">Career outcomes</p>
+      <h2>Sample role matches</h2>
+    </div>
+
+    <div class="table-wrap panel">
+      <table>
+        <thead>
+          <tr>
+            <th>Role</th>
+            <th>Salary Range</th>
+            <th>Match</th>
+            <th>Outlook</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Security Analyst</td>
+            <td>$72k - $96k</td>
+            <td>High</td>
+            <td>Growing</td>
+          </tr>
+          <tr>
+            <td>IT Support Specialist</td>
+            <td>$48k - $62k</td>
+            <td>Medium</td>
+            <td>Stable</td>
+          </tr>
+          <tr>
+            <td>Systems Analyst</td>
+            <td>$68k - $89k</td>
+            <td>Medium</td>
+            <td>Growing</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}
