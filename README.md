@@ -31,3 +31,8 @@ Setup:
    
 8. Enter http://localhost:5003 in your searchbar (front-end not up yet) 
    Use http://localhost:5001 for testing backend API
+
+
+## Note:
+I highly suggest you guys download **Live Server** extenstion off vscode
+for quick local deployment of seeing how pages will look like.
