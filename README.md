@@ -8,14 +8,26 @@ Need:
 Setup:
 1. Clone the repo
 2. Install docker desktop
-3. Setup your env
+   
+    Follow instructions of installation of Docker for now.
 
-    copy the example .env file in pathpilot-backend
-    create a new .env file and fill out based on the example.
+4. Setup your env
+
+   Create a .env file within pathpilot-backend folder:
+   
+   ``touch pathpilot-backend/.env``
+
+    Copy the example .env.example file in pathpilot-backend
+    and put it in the ceated .env file and fill out the information (your Email and your API KEYS) on the example.
     Website to request API keys: 
        https://developer.usajobs.gov/api-reference/
        https://theirstack.com/en/job-posting-api
     
-4. Run docker compose up in your terminal
-5. Enter http://localhost:5003 in your searchbar (front-end not up yet) 
+6. Run docker compose up in your terminal
+
+   In vscode open up a terminal, then run:
+
+    ``docker compose up --build``
+   
+8. Enter http://localhost:5003 in your searchbar (front-end not up yet) 
    Use http://localhost:5001 for testing backend API
