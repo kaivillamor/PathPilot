@@ -7,6 +7,9 @@ services:
       - ./pathpilot-backend/.env
     volumes:
       - ./pathpilot-backend:/app
+    cap_drop:
+      - ALL
+    read_only: true
   frontend:
     build: ./pathpilot-frontend
     ports:
@@ -15,6 +18,9 @@ services:
       - backend
     volumes:
       - ./pathpilot-frontend:/app
+    cap_drop:
+      - ALL
+    read_only: true
   monitoring:
     build: ./pathpilot-monitoring
     ports:
@@ -23,3 +29,6 @@ services:
       - backend
     volumes:
       - ./pathpilot-monitoring:/dashboard
+    cap_drop:
+      - ALL
+    read_only: true
