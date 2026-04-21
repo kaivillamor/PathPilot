@@ -1,116 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PlanPilot | Home</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../static/css/style.css">
-</head>
-<body>
-  <header class="site-header">
-    <div class="container nav-row">
-      <div>
-        <p class="eyebrow">Degree + career planner</p>
-        <a class="brand" href="#">PlanPilot</a>
-      </div>
-      <nav class="nav-links">
-        <a href="#">Home</a>
-        <a href="results.html">Results</a>
-        <a href="#planner">Planner</a>
-      </nav>
+{% extends "base.html" %}
+{% block title %}PathPilot | Home{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <h1>Plan your degree path and preview the careers it unlocks.</h1>
+      <p class="lead">
+        PathPilot helps students compare majors, map semester-by-semester courses,
+        and estimate career outcomes like salary ranges, job titles, and skill alignment.
+      </p>
+      <form class="hero-actions" action="/results" method="get">
+        <select name="degree" class="degree-select" required>
+          <option value="" disabled selected>Select a degree</option>
+          <option value="Computer Science">Computer Science</option>
+          <option value="Cybersecurity">Cybersecurity</option>
+          <option value="Information Technology">Information Technology</option>
+          <option value="Computer Engineering">Computer Engineering</option>
+          <option value="Data Science">Data Science</option>
+          <option value="Business Administration">Business Administration</option>
+          <option value="Marketing">Marketing</option>
+          <option value="Product Management">Product Management</option>
+        </select>
+        <button type="submit" class="btn btn-primary">View job results</button>
+      </form>
     </div>
-  </header>
 
-  <main>
-    <section class="hero">
-      <div class="container hero-grid">
-        <div>
-          <p class="pill">Mock demo data enabled</p>
-          <h1>Plan your degree path and preview the careers it unlocks.</h1>
-          <p class="lead">
-            PlanPilot helps students compare majors, map semester-by-semester courses,
-            and estimate career outcomes like salary ranges, job titles, and skill alignment.
-          </p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="results.html">View sample results</a>
-            <a class="btn btn-secondary" href="#planner">See planner overview</a>
-          </div>
-        </div>
+    <aside class="panel summary-card">
+      <h2>What you'll see</h2>
+      <ul class="stats-list">
+        <li><span>Federal jobs</span><strong>Live from USAJobs</strong></li>
+        <li><span>Private jobs</span><strong>Live from TheirStack</strong></li>
+        <li><span>Salary info</span><strong>Per posting</strong></li>
+        <li><span>Apply links</span><strong>Direct to listing</strong></li>
+      </ul>
+    </aside>
+  </div>
+</section>
 
-        <aside class="panel summary-card">
-          <h2>Sample student</h2>
-          <ul class="stats-list">
-            <li><span>Target</span><strong>Cybersecurity A.A.S.</strong></li>
-            <li><span>Credits complete</span><strong>27 / 60</strong></li>
-            <li><span>Estimated finish</span><strong>Spring 2027</strong></li>
-            <li><span>Top role</span><strong>Security Analyst</strong></li>
-          </ul>
-        </aside>
-      </div>
-    </section>
+<section class="section" id="planner">
+  <div class="container">
+    <div class="section-heading">
+      <p class="eyebrow">Planner snapshot</p>
+      <h2>What the app can show</h2>
+    </div>
 
-    <section class="section" id="planner">
-      <div class="container">
-        <div class="section-heading">
-          <p class="eyebrow">Planner snapshot</p>
-          <h2>What the app can show</h2>
-        </div>
+    <div class="card-grid three-up">
+      <article class="panel feature-card">
+        <h3>Path optimizer</h3>
+        <p>
+          Recommend the fastest path to a degree or certificate using completed credits,
+          prerequisites, and remaining course rules.
+        </p>
+      </article>
 
-        <div class="card-grid three-up">
-          <article class="panel feature-card">
-            <h3>Path optimizer</h3>
-            <p>
-              Recommend the fastest path to a degree or certificate using completed credits,
-              prerequisites, and remaining course rules.
-            </p>
-          </article>
+      <article class="panel feature-card">
+        <h3>Career outcomes</h3>
+        <p>
+          Preview likely roles like data analyst, IT support specialist, and junior developer
+          with salary bands and skill matches.
+        </p>
+      </article>
 
-          <article class="panel feature-card">
-            <h3>Career outcomes</h3>
-            <p>
-              Preview likely roles like data analyst, IT support specialist, and junior developer
-              with salary bands and skill matches.
-            </p>
-          </article>
-
-          <article class="panel feature-card">
-            <h3>Semester roadmap</h3>
-            <p>
-              Break the plan into realistic semesters so students can see workload, milestone classes,
-              and graduation timing.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section muted-section">
-      <div class="container card-grid two-up">
-        <article class="panel roadmap-card">
-          <p class="eyebrow">Mock roadmap</p>
-          <h2>Next recommended semester</h2>
-          <div class="course-list">
-            <div><span>CS 201</span><strong>Intro to Python</strong></div>
-            <div><span>NET 210</span><strong>Network Fundamentals</strong></div>
-            <div><span>SEC 115</span><strong>Security Principles</strong></div>
-            <div><span>ENG 102</span><strong>Composition II</strong></div>
-          </div>
-        </article>
-
-        <article class="panel roadmap-card">
-          <p class="eyebrow">Career preview</p>
-          <h2>Possible salary outcomes</h2>
-          <div class="salary-stack">
-            <div><span>IT Support Specialist</span><strong>$48k - $62k</strong></div>
-            <div><span>Security Analyst</span><strong>$72k - $96k</strong></div>
-            <div><span>Systems Analyst</span><strong>$68k - $89k</strong></div>
-          </div>
-        </article>
-      </div>
-    </section>
-  </main>
-</body>
-</html>
+      <article class="panel feature-card">
+        <h3>Semester roadmap</h3>
+        <p>
+          Break the plan into realistic semesters so students can see workload, milestone classes,
+          and graduation timing.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+{% endblock %}

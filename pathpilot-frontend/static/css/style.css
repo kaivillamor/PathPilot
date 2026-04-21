@@ -129,6 +129,18 @@ a {
   gap: 1rem;
   margin-top: 1.75rem;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+.degree-select {
+  padding: 0.9rem 1.1rem;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  font-size: 1rem;
+  font-weight: 500;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
 }
 
 .btn {
@@ -210,6 +222,7 @@ tbody tr:last-child {
 
 .table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
@@ -233,6 +246,67 @@ th {
 
 .accent-border {
   outline: 2px solid rgba(52, 87, 235, 0.2);
+}
+
+.job-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.job-card {
+  padding: 1.25rem 1.5rem;
+}
+
+.job-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.job-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 0.2rem;
+}
+
+.job-meta {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.job-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.tag {
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+.tag-muted {
+  color: var(--muted);
+}
+
+.btn-sm {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.88rem;
+  flex-shrink: 0;
+}
+
+.error-panel {
+  color: #c0392b;
 }
 
 @media (max-width: 860px) {
