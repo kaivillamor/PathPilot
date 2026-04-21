@@ -1,109 +1,118 @@
 {% extends "base.html" %}
-{% block title %}PlanPilot | Results{% endblock %}
+{% block title %}PathPilot | Results{% endblock %}
 
 {% block content %}
 <section class="section results-hero">
   <div class="container">
-    <p class="eyebrow">Generated from mock data</p>
-    <h1>Recommended degree path for Sean Johnson</h1>
-    <p class="lead narrow">
-      Based on 27 completed credits, preference for tech roles, and a goal to finish within
-      4 semesters, PlanPilot ranks the Cybersecurity A.A.S. as the best-fit program.
-    </p>
+    <p class="eyebrow">Live job results</p>
+    <h1>Jobs matching a {{ degree }} degree</h1>
   </div>
 </section>
 
+{% if error %}
 <section class="section">
-  <div class="container card-grid two-up">
-    <article class="panel result-card accent-border">
-      <p class="label">Best-fit program</p>
-      <h2>Cybersecurity A.A.S.</h2>
-      <p>Confidence score: <strong>91%</strong></p>
-      <ul class="bullet-list">
-        <li>Builds on completed intro computing credits</li>
-        <li>Strong alignment with security and support roles</li>
-        <li>Can be completed by Spring 2027</li>
-      </ul>
-    </article>
+  <div class="container">
+    <div class="panel error-panel">
+      <strong>Error loading results:</strong> {{ error }}
+    </div>
+  </div>
+</section>
+{% else %}
 
-    <article class="panel result-card">
-      <p class="label">Alternative path</p>
-      <h2>Information Technology Certificate</h2>
-      <p>Confidence score: <strong>78%</strong></p>
-      <ul class="bullet-list">
-        <li>Shorter path to completion</li>
-        <li>Good for help desk and junior admin roles</li>
-        <li>Lower long-term salary ceiling</li>
-      </ul>
-    </article>
+<section class="section">
+  <div class="container">
+    <div class="section-heading">
+      <p class="eyebrow">Federal opportunities</p>
+      <h2>USAJobs listings</h2>
+    </div>
+
+    {% if federal_jobs is mapping %}
+    <div class="panel error-panel"><strong>Error:</strong> {{ federal_jobs.get("error", "Unknown error") }}</div>
+    {% elif federal_jobs and federal_jobs | length > 0 %}
+    <div class="job-list">
+      {% for job in federal_jobs %}
+      <div class="panel job-card">
+        <div class="job-card-top">
+          <div>
+            <p class="job-title">{{ job.title or "Untitled" }}</p>
+            <p class="job-meta">{{ job.organization or "" }}{% if job.location %} &middot; {{ job.location }}{% endif %}</p>
+          </div>
+          {% if job.url %}
+          <a class="btn btn-secondary btn-sm" href="{{ job.url }}" target="_blank" rel="noopener">Apply</a>
+          {% endif %}
+        </div>
+        <div class="job-tags">
+          {% if job.salary_min and job.salary_max %}
+          <span class="tag">${{ "{:,.0f}".format(job.salary_min | float) }} – ${{ "{:,.0f}".format(job.salary_max | float) }}</span>
+          {% endif %}
+          {% if job.remote %}
+          <span class="tag">Remote</span>
+          {% endif %}
+          {% if job.applicationclose %}
+          <span class="tag tag-muted">Closes {{ job.applicationclose[:10] }}</span>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="panel"><p>No federal listings found for this degree.</p></div>
+    {% endif %}
   </div>
 </section>
 
 <section class="section muted-section">
   <div class="container">
     <div class="section-heading">
-      <p class="eyebrow">Semester-by-semester</p>
-      <h2>Suggested course plan</h2>
+      <p class="eyebrow">Private sector</p>
+      <h2>TheirStack listings</h2>
     </div>
 
-    <div class="timeline">
-      <div class="timeline-item panel">
-        <h3>Fall 2026</h3>
-        <p>CS 201, SEC 115, NET 210, ENG 102</p>
+    {% if private_jobs is mapping %}
+    <div class="panel error-panel"><strong>Error:</strong> {{ private_jobs.get("error", "Unknown error") }}</div>
+    {% elif private_jobs and private_jobs | length > 0 %}
+    <div class="job-list">
+      {% for job in private_jobs %}
+      <div class="panel job-card">
+        <div class="job-card-top">
+          <div>
+            <p class="job-title">{{ job.title or "Untitled" }}</p>
+            <p class="job-meta">{{ job.company or "" }}{% if job.location %} &middot; {{ job.location }}{% endif %}</p>
+          </div>
+          {% if job.url %}
+          <a class="btn btn-secondary btn-sm" href="{{ job.url }}" target="_blank" rel="noopener">Apply</a>
+          {% endif %}
+        </div>
+        <div class="job-tags">
+          {% if job.salary_string %}
+          <span class="tag">{{ job.salary_string }}</span>
+          {% elif job.salary_min and job.salary_max %}
+          <span class="tag">${{ "{:,.0f}".format(job.salary_min | float) }} – ${{ "{:,.0f}".format(job.salary_max | float) }}</span>
+          {% endif %}
+          {% if job.seniority %}
+          <span class="tag">{{ job.seniority | capitalize }}</span>
+          {% endif %}
+          {% if job.remote %}
+          <span class="tag">Remote</span>
+          {% endif %}
+          {% if job.date_posted %}
+          <span class="tag tag-muted">Posted {{ job.date_posted }}</span>
+          {% endif %}
+        </div>
       </div>
-
-      <div class="timeline-item panel">
-        <h3>Spring 2027</h3>
-        <p>SEC 220, DB 205, MATH 115, Humanities Elective</p>
-      </div>
-
-      <div class="timeline-item panel">
-        <h3>Summer 2027</h3>
-        <p>Internship, Security Lab, Capstone Prep</p>
-      </div>
+      {% endfor %}
     </div>
+    {% else %}
+    <div class="panel"><p>No private listings found for this degree.</p></div>
+    {% endif %}
   </div>
 </section>
 
+{% endif %}
+
 <section class="section">
   <div class="container">
-    <div class="section-heading">
-      <p class="eyebrow">Career outcomes</p>
-      <h2>Sample role matches</h2>
-    </div>
-
-    <div class="table-wrap panel">
-      <table>
-        <thead>
-          <tr>
-            <th>Role</th>
-            <th>Salary Range</th>
-            <th>Match</th>
-            <th>Outlook</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Security Analyst</td>
-            <td>$72k - $96k</td>
-            <td>High</td>
-            <td>Growing</td>
-          </tr>
-          <tr>
-            <td>IT Support Specialist</td>
-            <td>$48k - $62k</td>
-            <td>Medium</td>
-            <td>Stable</td>
-          </tr>
-          <tr>
-            <td>Systems Analyst</td>
-            <td>$68k - $89k</td>
-            <td>Medium</td>
-            <td>Growing</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <a href="/" class="btn btn-secondary">Search another degree</a>
   </div>
 </section>
 {% endblock %}
