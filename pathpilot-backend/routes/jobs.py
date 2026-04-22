@@ -70,8 +70,14 @@ def jobs():
     usajobs_data = get_usajobs(usajobs_series)
     theirstack_data = get_theirstack(theirstack_title)
 
-    if "error" in usajobs_data or "error" in theirstack_data:
-        log_error()
+    usajobs_failed = isinstance(usajobs_data, dict) and "error" in usajobs_data
+    theirstack_failed = isinstance(theirstack_data, dict) and "error" in theirstack_data
+    if usajobs_failed and theirstack_failed:
+        log_error("both")
+    elif usajobs_failed:
+        log_error("usajobs")
+    elif theirstack_failed:
+        log_error("theirstack")
 
     log_request()
     log_degree_search(degree)

@@ -7,11 +7,15 @@ import plotly.graph_objects as go
 
 app = dash.Dash(__name__)
 app.layout = html.Div([
-    dcc.Graph(id = "response-times-graph"),
-    dcc.Graph(id = "total-requests-graph"),
-    dcc.Graph(id = "degree-searches-graph"),
-    dcc.Graph(id = "error-count-graph"),
-    dcc.Interval(id = "interval", interval = 5000, n_intervals = 0)
+    html.Div([
+        html.Div(dcc.Graph(id="response-times-graph"), style={"width": "50%"}),
+        html.Div(dcc.Graph(id="degree-searches-graph"), style={"width": "50%"}),
+    ], style={"display": "flex"}),
+    html.Div([
+        html.Div(dcc.Graph(id="total-requests-graph"), style={"width": "50%"}),
+        html.Div(dcc.Graph(id="error-count-graph"), style={"width": "50%"}),
+    ], style={"display": "flex"}),
+    dcc.Interval(id="interval", interval=5000, n_intervals=0)
 ])
 
 @app.callback(
@@ -35,26 +39,32 @@ def update_graphs(n):
 
     total_requests_figure = go.Figure(
         go.Indicator(
-            mode = "number",
-            value = data["total_requests"],
-            title = {"text": "Total Requests"}
+            mode="number",
+            value=data["total_requests"],
+            title={"text": "Degree Searches<br><span style='font-size:0.6em;color:gray'>1 search = 1 USAJobs call + 1 TheirStack call</span>"}
         )
     )
 
     degree_figure = go.Figure(
         go.Bar(
-            x = list(data["degree_searches"].keys()),
-            y = list(data["degree_searches"].values())
+            x=list(data["degree_searches"].keys()),
+            y=list(data["degree_searches"].values())
         )
     )
-    degree_figure.update_layout(title = "Degree Searches")
+    degree_figure.update_layout(title="Searches by Degree")
 
+    breakdown = data.get("error_breakdown", {})
     error_count_figure = go.Figure(
-        go.Indicator(
-            mode = "number",
-            value = data["error_count"],
-            title = {"text": "Error Count"}
+        go.Bar(
+            x=list(breakdown.keys()) if breakdown else ["No errors"],
+            y=list(breakdown.values()) if breakdown else [0],
+            marker_color=["#e74c3c" if k != "No errors" else "#2ecc71" for k in (breakdown.keys() if breakdown else ["No errors"])]
         )
+    )
+    error_count_figure.update_layout(
+        title=f"API Errors by Source (Total: {data['error_count']})",
+        xaxis_title="Source",
+        yaxis_title="Count"
     )
 
     return response_times_figure, total_requests_figure, degree_figure, error_count_figure

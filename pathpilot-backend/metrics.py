@@ -20,8 +20,13 @@ def init_db():
     cur.execute("""
         CREATE TABLE IF NOT EXISTS error_count (
             id SERIAL PRIMARY KEY,
+            error_source VARCHAR(20) DEFAULT 'unknown',
             timestamp TIMESTAMP DEFAULT NOW()
         )
+    """)
+    cur.execute("""
+        ALTER TABLE error_count
+        ADD COLUMN IF NOT EXISTS error_source VARCHAR(20) DEFAULT 'unknown'
     """)
     cur.execute("""
         CREATE TABLE IF NOT EXISTS degree_searches (
@@ -50,10 +55,10 @@ def log_request():
     cur.close()
     conn.close()
 
-def log_error():
+def log_error(error_source="unknown"):
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("INSERT INTO error_count DEFAULT VALUES")
+    cur.execute("INSERT INTO error_count (error_source) VALUES (%s)", (error_source,))
     conn.commit()
     cur.close()
     conn.close()
@@ -84,6 +89,9 @@ def get_metrics():
     cur.execute("SELECT COUNT(*) FROM error_count")
     error_count = cur.fetchone()[0]
 
+    cur.execute("SELECT error_source, COUNT(*) FROM error_count GROUP BY error_source")
+    error_breakdown = {row[0]: row[1] for row in cur.fetchall()}
+
     cur.execute("SELECT degree, COUNT(*) FROM degree_searches GROUP BY degree ORDER BY COUNT(*) DESC")
     degree_searches = {row[0]: row[1] for row in cur.fetchall()}
 
@@ -99,6 +107,7 @@ def get_metrics():
     return {
         "total_requests": total_requests,
         "error_count": error_count,
+        "error_breakdown": error_breakdown,
         "degree_searches": degree_searches,
         "response_times": response_times,
         "avg_response_time": round(avg_response_time, 4) if avg_response_time else None,
