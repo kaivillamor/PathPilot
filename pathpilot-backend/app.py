@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 from dotenv import load_dotenv
 from routes.jobs import jobs_bp
 from metrics import get_metrics, init_db
+import os
 
 load_dotenv()
 
@@ -24,6 +25,9 @@ def results():
 
 @app.route("/metrics")
 def metrics():
+    secret = os.getenv("METRICS_SECRET")
+    if secret and request.headers.get("X-Metrics-Secret") != secret:
+        return jsonify({"error": "Unauthorized"}), 403
     return jsonify(get_metrics())
 
 
