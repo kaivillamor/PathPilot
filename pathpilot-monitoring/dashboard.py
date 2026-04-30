@@ -3,6 +3,7 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 import requests
 import plotly.graph_objects as go
+import os
 
 
 app = dash.Dash(__name__)
@@ -27,7 +28,8 @@ app.layout = html.Div([
 )
 
 def update_graphs(n):
-    data = requests.get("http://backend:5000/metrics").json()
+    secret = os.getenv("METRICS_SECRET", "")
+    data = requests.get("http://backend:5000/metrics", headers={"X-Metrics-Secret": secret}).json()
 
     response_times_figure = go.Figure(
         go.Scatter(

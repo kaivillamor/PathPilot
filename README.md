@@ -30,7 +30,7 @@ Setup:
     ``docker compose up --build``
    
 8. Enter http://localhost:5003 in your searchbar (front-end not up yet) 
-   Use http://localhost:5001 for testing backend API
+   Use http://localhost:5005 for testing backend API
 
 
 ## Note:

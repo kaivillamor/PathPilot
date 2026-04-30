@@ -27,6 +27,8 @@ services:
       - "5005:8050"
     depends_on:
       - backend
+    env_file:
+      - ./pathpilot-backend/.env
     volumes:
       - ./pathpilot-monitoring:/dashboard
     cap_drop:
