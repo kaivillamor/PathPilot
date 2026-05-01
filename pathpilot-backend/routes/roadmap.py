@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from openai import OpenAI
 from metrics import get_db
+from datetime import datetime
 import os
 import json
 
@@ -55,13 +56,22 @@ def roadmap():
         if electives:
             courses_section += "\nElectives:\n" + "\n".join(electives)
 
+    semesters_remaining = {"Freshman": 8, "Sophomore": 6, "Junior": 4, "Senior": 2}
+    num_semesters = semesters_remaining[year]
+
+    now = datetime.now()
+    next_semester = "Fall" if now.month < 8 else "Spring"
+    next_year = now.year if now.month < 8 else now.year + 1
+
     has_courses = bool(required_courses or electives or math_courses)
     course_instruction = "Use only the provided course list when building the semester plan." if has_courses else f"Generate realistic course names for a typical {degree} curriculum."
 
     prompt = f"""A {year} student studying {degree}{interests_line}.{courses_section}
 
+Today is {now.strftime("%B %Y")}. The next upcoming semester is {next_semester} {next_year}.
+
 Return a JSON object with exactly these keys:
-- semester_plan: array of objects with "semester" (e.g. "Fall 2026") and "courses" (array of 4-5 course name strings). Generate only the remaining semesters based on their year. {course_instruction}
+- semester_plan: array of exactly {num_semesters} objects with "semester" (e.g. "Fall 2026") and "courses" (array of 4-5 course name strings). Start from {next_semester} {next_year} and alternate Fall/Spring. {course_instruction}
 - career_paths: array of 3 objects with "title", "description" (2 sentences), and "salary_range" (e.g. "$75k-$110k")
 - skills: array of 8-10 skill strings to develop
 - job_titles: array of 5 objects with "title" and "salary_range"
