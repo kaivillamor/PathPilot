@@ -42,6 +42,29 @@ def init_db():
             id SERIAL PRIMARY KEY
         )
     """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS courses (
+            id SERIAL PRIMARY KEY,
+            code VARCHAR(20) NOT NULL,
+            name VARCHAR(200) NOT NULL,
+            degree VARCHAR(100) NOT NULL,
+            required BOOLEAN DEFAULT FALSE,
+            elective BOOLEAN DEFAULT FALSE,
+            mathematics BOOLEAN DEFAULT FALSE
+        )
+    """)
+    cur.execute("""
+        ALTER TABLE courses
+        ADD COLUMN IF NOT EXISTS required BOOLEAN DEFAULT FALSE
+    """)
+    cur.execute("""
+        ALTER TABLE courses
+        ADD COLUMN IF NOT EXISTS elective BOOLEAN DEFAULT FALSE
+    """)
+    cur.execute("""
+        ALTER TABLE courses
+        ADD COLUMN IF NOT EXISTS mathematics BOOLEAN DEFAULT FALSE
+    """)
 
     conn.commit()
     cur.close()

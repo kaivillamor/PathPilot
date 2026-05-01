@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}PathPilot | Roadmap{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <p class="eyebrow">AI Career Advisor</p>
+      <h1>Your personalized roadmap.</h1>
+      <p class="lead">Tell us where you are and we'll map out where you're going.</p>
+
+      <form class="roadmap-form" action="/roadmap" method="post" id="roadmap-form">
+        <div class="form-row">
+          <select name="degree" class="degree-select" required>
+            <option value="" disabled {% if not degree %}selected{% endif %}>Select a degree</option>
+            <option value="Computer Science" {% if degree == "Computer Science" %}selected{% endif %}>Computer Science</option>
+            <option value="Cybersecurity" {% if degree == "Cybersecurity" %}selected{% endif %}>Cybersecurity</option>
+            <option value="Information Technology" {% if degree == "Information Technology" %}selected{% endif %}>Information Technology</option>
+            <option value="Computer Engineering" {% if degree == "Computer Engineering" %}selected{% endif %}>Computer Engineering</option>
+            <option value="Data Science" {% if degree == "Data Science" %}selected{% endif %}>Data Science</option>
+            <option value="Business Administration" {% if degree == "Business Administration" %}selected{% endif %}>Business Administration</option>
+            <option value="Marketing" {% if degree == "Marketing" %}selected{% endif %}>Marketing</option>
+            <option value="Product Management" {% if degree == "Product Management" %}selected{% endif %}>Product Management</option>
+          </select>
+          <select name="year" class="degree-select" required>
+            <option value="" disabled {% if not year %}selected{% endif %}>Year in school</option>
+            <option value="Freshman" {% if year == "Freshman" %}selected{% endif %}>Freshman</option>
+            <option value="Sophomore" {% if year == "Sophomore" %}selected{% endif %}>Sophomore</option>
+            <option value="Junior" {% if year == "Junior" %}selected{% endif %}>Junior</option>
+            <option value="Senior" {% if year == "Senior" %}selected{% endif %}>Senior</option>
+          </select>
+        </div>
+        <textarea name="interests" class="interests-input" placeholder="Interests or career goals (optional)">{{ interests or "" }}</textarea>
+        <button type="submit" class="btn btn-primary" id="submit-btn">Generate roadmap</button>
+      </form>
+    </div>
+
+    <aside class="panel summary-card">
+      <h2>What you'll get</h2>
+      <ul class="stats-list">
+        <li><span>Semester plan</span><strong>Personalized courses</strong></li>
+        <li><span>Career paths</span><strong>Top 3 matches</strong></li>
+        <li><span>Skills to build</span><strong>AI-recommended</strong></li>
+        <li><span>Job titles</span><strong>With salary ranges</strong></li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+{% if error %}
+<section class="section">
+  <div class="container">
+    <div class="panel error-panel"><p>{{ error }}</p></div>
+  </div>
+</section>
+{% endif %}
+
+{% if roadmap %}
+<section class="section">
+  <div class="container">
+    <div class="section-heading">
+      <p class="eyebrow">{{ year }} · {{ degree }}</p>
+      <h2>Your roadmap</h2>
+    </div>
+
+    {% if roadmap.semester_plan %}
+    <h3 class="subsection-title">Semester plan</h3>
+    <div class="semester-grid">
+      {% for sem in roadmap.semester_plan %}
+      <div class="panel semester-card">
+        <p class="eyebrow">{{ sem.semester }}</p>
+        <ul class="bullet-list">
+          {% for course in sem.courses %}
+          <li class="bullet-item">{{ course }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if roadmap.career_paths %}
+    <h3 class="subsection-title">Career paths</h3>
+    <div class="card-grid three-up">
+      {% for path in roadmap.career_paths %}
+      <div class="panel feature-card">
+        <h3>{{ path.title }}</h3>
+        <p>{{ path.description }}</p>
+        <span class="tag">{{ path.salary_range }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="two-up" style="margin-top: 1.5rem;">
+      {% if roadmap.skills %}
+      <div class="panel">
+        <p class="eyebrow">Skills to develop</p>
+        <div class="job-tags" style="margin-top: 0.75rem;">
+          {% for skill in roadmap.skills %}
+          <span class="tag">{{ skill }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if roadmap.job_titles %}
+      <div class="panel">
+        <p class="eyebrow">Expected job titles</p>
+        <ul class="stats-list" style="margin-top: 0.75rem;">
+          {% for job in roadmap.job_titles %}
+          <li><span>{{ job.title }}</span><strong>{{ job.salary_range }}</strong></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% block scripts %}
+<script>
+  document.getElementById("roadmap-form").addEventListener("submit", function () {
+    const btn = document.getElementById("submit-btn");
+    btn.textContent = "Generating...";
+    btn.disabled = true;
+    showSpinner("Generating your roadmap...");
+  });
+</script>
+{% endblock %}
+{% endblock %}

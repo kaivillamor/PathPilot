@@ -16,6 +16,8 @@ services:
       - "5003:5000"
     depends_on:
       - backend
+    env_file:
+      - ./pathpilot-backend/.env
     volumes:
       - ./pathpilot-frontend:/app
     cap_drop:

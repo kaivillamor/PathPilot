@@ -24,6 +24,13 @@
         </select>
         <button type="submit" class="btn btn-primary">View job results</button>
       </form>
+      {% block scripts %}
+      <script>
+        document.querySelector("form").addEventListener("submit", function() {
+          showSpinner("Finding jobs...");
+        });
+      </script>
+      {% endblock %}
     </div>
 
     <aside class="panel summary-card">
