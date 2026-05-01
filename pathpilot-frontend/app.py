@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request
 import requests
+import os
 
 app = Flask(__name__)
+
+BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:5000")
 
 @app.route("/")
 def index():
@@ -11,7 +14,7 @@ def index():
 def results():
     degree = request.args.get("degree")
     try:
-        response = requests.get((f"http://backend:5000/jobs"), params = {"degree": degree})
+        response = requests.get(f"{BACKEND_URL}/jobs", params={"degree": degree})
         response.raise_for_status()
         data = response.json()
     except Exception as e:

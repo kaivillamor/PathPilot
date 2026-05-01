@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from routes.jobs import jobs_bp
 from metrics import get_metrics, init_db
@@ -12,16 +12,9 @@ app.register_blueprint(jobs_bp)
 
 init_db()
 
-
 @app.route("/")
 def home():
-    return render_template("index.html")
-
-
-@app.route("/results")
-def results():
-    return render_template("results.html")
-
+    return jsonify({"error": "Unauthorized"}), 403
 
 @app.route("/metrics")
 def metrics():
@@ -29,7 +22,6 @@ def metrics():
     if secret and request.headers.get("X-Metrics-Secret") != secret:
         return jsonify({"error": "Unauthorized"}), 403
     return jsonify(get_metrics())
-
 
 # do not change the host (specific to Docker)
 # allows Flask to accept connections from anywhere including Docker's internals.
