@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from routes.jobs import jobs_bp
+from routes.roadmap import roadmap_bp
 from metrics import get_metrics, init_db
 import os
 
@@ -9,6 +10,7 @@ load_dotenv()
 app = Flask(__name__)
 
 app.register_blueprint(jobs_bp)
+app.register_blueprint(roadmap_bp)
 
 init_db()
 

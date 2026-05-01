@@ -15,3 +15,6 @@ bandit
 
 # python library for postgresql
 psycopg2-binary
+
+# openai api
+openai

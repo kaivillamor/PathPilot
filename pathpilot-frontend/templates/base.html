@@ -14,12 +14,12 @@
     <div class="container nav-row">
       <div>
         <p class="eyebrow">Degree + career planner</p>
-        <a class="brand" href="/">PlanPilot</a>
+        <a class="brand" href="/">PathPilot</a>
       </div>
 
       <nav class="nav-links">
         <a href="/">Home</a>
-        <a href="#planner">Planner</a>
+        <a href="/roadmap">Roadmap</a>
       </nav>
     </div>
   </header>
@@ -27,5 +27,18 @@
   <main>
     {% block content %}{% endblock %}
   </main>
+
+  <div class="spinner-overlay" id="spinner-overlay">
+    <div class="spinner"></div>
+    <p class="spinner-label" id="spinner-label">Loading...</p>
+  </div>
+
+  <script>
+    function showSpinner(label) {
+      document.getElementById("spinner-label").textContent = label || "Loading...";
+      document.getElementById("spinner-overlay").classList.add("active");
+    }
+  </script>
+  {% block scripts %}{% endblock %}
 </body>
 </html>
