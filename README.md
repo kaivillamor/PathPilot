@@ -1,19 +1,17 @@
 # PathPilot
 A planning app that optimizes a student's degree/certificate path and shows career outcomes (salary ranges, roles), based on the Degree/Certificate Optimizer's rules engine + "salary API" future-work direction.
 
+(Current) Link to Access the Website: https://pathpilot-frontend-production.up.railway.app/
+- Post Deployment off Railway Cloud
+
+----------------------------------------------------------------------------------------------------------------
+
+(Dev Testing)
+
 Need:
 - Python 3.11
 - Docker Desktop
 
-(Current) Link to Access the Website: https://pathpilot-frontend-production.up.railway.app/
-- Post Deployment off Railway Cloud
-
-
-
-
-
-
-(Dev Testing)
 Setup:
 1. Clone the repo
 2. Install docker desktop
