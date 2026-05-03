@@ -19,6 +19,8 @@ app.layout = html.Div([
     dcc.Interval(id="interval", interval=5000, n_intervals=0)
 ])
 
+BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:5000")
+
 @app.callback(
     Output("response-times-graph", "figure"),
     Output("total-requests-graph", "figure"),
@@ -26,9 +28,6 @@ app.layout = html.Div([
     Output("error-count-graph", "figure"),
     Input("interval", "n_intervals")
 )
-
-BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:5000")
-
 def update_graphs(n):
     secret = os.getenv("METRICS_SECRET", "")
     data = requests.get(f"{BACKEND_URL}/metrics", headers={"X-Metrics-Secret": secret}).json()
