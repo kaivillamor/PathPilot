@@ -7,30 +7,30 @@
     <div>
       <h1>Plan your degree path and preview the careers it unlocks.</h1>
       <p class="lead">
-        PathPilot helps students compare majors, map semester-by-semester courses,
-        and estimate career outcomes like salary ranges, job titles, and skill alignment.
+        PathPilot helps students compare majors and estimate career outcomes
+        using course-informed skill alignment to rank and filter job results.
       </p>
       <form class="hero-actions" action="/results" method="get">
-        <select name="degree" class="degree-select" required>
+        <input type="hidden" name="institution" id="institution-select" value="pathpilot_demo" />
+        <select name="degree" id="degree-select" class="degree-select" required>
           <option value="" disabled selected>Select a degree</option>
-          <option value="Computer Science">Computer Science</option>
-          <option value="Cybersecurity">Cybersecurity</option>
-          <option value="Information Technology">Information Technology</option>
-          <option value="Computer Engineering">Computer Engineering</option>
-          <option value="Data Science">Data Science</option>
-          <option value="Business Administration">Business Administration</option>
-          <option value="Marketing">Marketing</option>
-          <option value="Product Management">Product Management</option>
+          {% for degree in catalog.degrees %}
+          <option value="{{ degree }}">{{ degree }}</option>
+          {% endfor %}
         </select>
-        <button type="submit" class="btn btn-primary">View job results</button>
+        <div class="course-actions">
+          <button type="button" id="select-all-courses" class="btn btn-secondary btn-sm">Select all courses</button>
+          <button type="button" id="clear-courses" class="btn btn-secondary btn-sm">Clear courses</button>
+        </div>
+        <div id="courses-checklist" class="course-checklist panel">
+          <p class="job-meta">Select a degree to load course options.</p>
+        </div>
+        <input type="hidden" name="job_match_mode" value="strong" />
+        <input type="hidden" name="min_match_score" value="1" />
+        <button type="submit" id="view-results-btn" class="btn btn-primary">View job results</button>
+        <p id="form-message" class="job-meta"></p>
       </form>
-      {% block scripts %}
-      <script>
-        document.querySelector("form").addEventListener("submit", function() {
-          showSpinner("Finding jobs...");
-        });
-      </script>
-      {% endblock %}
+      <p class="lead narrow">Select completed courses to influence job ranking and filtering.</p>
     </div>
 
     <aside class="panel summary-card">
@@ -40,6 +40,7 @@
         <li><span>Private jobs</span><strong>Live from TheirStack</strong></li>
         <li><span>Salary info</span><strong>Per posting</strong></li>
         <li><span>Apply links</span><strong>Direct to listing</strong></li>
+        <li><span>Course-aware ranking</span><strong>By inferred skills</strong></li>
       </ul>
     </aside>
   </div>
@@ -54,10 +55,10 @@
 
     <div class="card-grid three-up">
       <article class="panel feature-card">
-        <h3>Path optimizer</h3>
+        <h3>Course-to-skill mapping</h3>
         <p>
-          Recommend the fastest path to a degree or certificate using completed credits,
-          prerequisites, and remaining course rules.
+          Convert completed courses into a compact skill profile used for
+          smarter job ranking and filtering.
         </p>
       </article>
 
@@ -70,13 +71,146 @@
       </article>
 
       <article class="panel feature-card">
-        <h3>Semester roadmap</h3>
+        <h3>Relevance controls</h3>
         <p>
-          Break the plan into realistic semesters so students can see workload, milestone classes,
-          and graduation timing.
+          Switch between course-filtered matches and all jobs to
+          focus on the opportunities that fit your completed coursework.
         </p>
       </article>
     </div>
   </div>
 </section>
+
+<script>
+  const catalogSeed = {{ catalog|tojson }};
+  const institutionSelect = document.getElementById("institution-select");
+  const degreeSelect = document.getElementById("degree-select");
+  const coursesChecklist = document.getElementById("courses-checklist");
+  const selectAllBtn = document.getElementById("select-all-courses");
+  const clearCoursesBtn = document.getElementById("clear-courses");
+  const submitBtn = document.getElementById("view-results-btn");
+  const formMessage = document.getElementById("form-message");
+  const form = degreeSelect.closest("form");
+
+  function setMessage(text) {
+    formMessage.textContent = text || "";
+  }
+
+  function renderCourses(courses) {
+    coursesChecklist.innerHTML = "";
+    if (!courses.length) {
+      const empty = document.createElement("p");
+      empty.className = "job-meta";
+      empty.textContent = "No course options yet. Pick a degree.";
+      coursesChecklist.appendChild(empty);
+      return;
+    }
+
+    for (const course of courses) {
+      const label = document.createElement("label");
+      label.className = "course-checkbox";
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.name = "courses";
+      input.value = course.value;
+
+      const text = document.createElement("span");
+      text.textContent = `${course.label} (${course.credits} cr)`;
+
+      label.appendChild(input);
+      label.appendChild(text);
+      coursesChecklist.appendChild(label);
+    }
+  }
+
+  function setSubmitState() {
+    const hasDegree = !!degreeSelect.value;
+    const hasCourse = getCourseCheckboxes().some((checkbox) => checkbox.checked);
+    submitBtn.disabled = !(hasDegree && hasCourse);
+  }
+
+  function getCourseCheckboxes() {
+    return Array.from(coursesChecklist.querySelectorAll('input[type="checkbox"][name="courses"]'));
+  }
+
+  function selectAllCourses() {
+    const checkboxes = getCourseCheckboxes();
+    for (const checkbox of checkboxes) checkbox.checked = true;
+    setMessage("");
+    setSubmitState();
+  }
+
+  function clearCourses() {
+    const checkboxes = getCourseCheckboxes();
+    for (const checkbox of checkboxes) checkbox.checked = false;
+    setMessage("");
+    setSubmitState();
+  }
+
+  async function loadCourses() {
+    const institution = institutionSelect.value || "pathpilot_demo";
+    const degree = degreeSelect.value;
+    if (!degree) {
+      renderCourses([]);
+      setMessage("");
+      setSubmitState();
+      return;
+    }
+
+    try {
+      const response = await fetch(`/course-options?institution=${encodeURIComponent(institution)}&degree=${encodeURIComponent(degree)}`);
+      if (!response.ok) {
+        renderCourses([]);
+        setMessage("Could not load course options. Please make sure backend is running.");
+        setSubmitState();
+        return;
+      }
+      const data = await response.json();
+      const courses = data.courses || [];
+      if (courses.length > 0) {
+        renderCourses(courses);
+        setMessage("");
+      } else {
+        renderCourses([]);
+        setMessage("No courses found for this degree right now. Try refreshing.");
+      }
+      setSubmitState();
+    } catch (_err) {
+      renderCourses([]);
+      setMessage("Could not load course options. Please make sure backend is running.");
+      setSubmitState();
+    }
+  }
+
+  form.addEventListener("submit", (event) => {
+    if (!degreeSelect.value) {
+      event.preventDefault();
+      setMessage("Please select a degree before searching.");
+      return;
+    }
+    const selectedCount = getCourseCheckboxes().filter((checkbox) => checkbox.checked).length;
+    if (selectedCount === 0) {
+      event.preventDefault();
+      setSubmitState();
+      setMessage("Please select at least one course before viewing job results.");
+      return;
+    }
+    setMessage("");
+  });
+
+  coursesChecklist.addEventListener("change", (event) => {
+    if (event.target && event.target.matches('input[type="checkbox"][name="courses"]')) {
+      setMessage("");
+      setSubmitState();
+    }
+  });
+
+  selectAllBtn.addEventListener("click", selectAllCourses);
+  clearCoursesBtn.addEventListener("click", clearCourses);
+  degreeSelect.addEventListener("change", loadCourses);
+
+  setSubmitState();
+  renderCourses(catalogSeed.courses || []);
+</script>
 {% endblock %}
