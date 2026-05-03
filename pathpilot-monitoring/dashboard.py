@@ -27,9 +27,11 @@ app.layout = html.Div([
     Input("interval", "n_intervals")
 )
 
+BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:5000")
+
 def update_graphs(n):
     secret = os.getenv("METRICS_SECRET", "")
-    data = requests.get("http://backend:5000/metrics", headers={"X-Metrics-Secret": secret}).json()
+    data = requests.get(f"{BACKEND_URL}/metrics", headers={"X-Metrics-Secret": secret}).json()
 
     response_times_figure = go.Figure(
         go.Scatter(
