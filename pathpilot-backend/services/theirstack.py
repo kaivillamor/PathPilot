@@ -1,23 +1,24 @@
 import requests
 import os
 
+
 def get_theirstack(theirstack_title):
     # theirstack api call
     try:
         theirstack_response = requests.post(
             "https://api.theirstack.com/v1/jobs/search",
-            headers = {
+            headers={
                 "Authorization": f"Bearer {os.getenv('THEIRSTACK_API_KEY')}",
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json",
             },
-            json = {
-                'job_title_or': theirstack_title,
-                'job_country_code_or': ['US'],
-                'posted_at_max_age_days': 30,
-                'limit': 10,
-                'page': 0
+            json={
+                "job_title_or": theirstack_title,
+                "job_country_code_or": ["US"],
+                "posted_at_max_age_days": 30,
+                "limit": 15,
+                "page": 0,
             },
-            timeout = 10
+            timeout=10,
         )
         theirstack_response.raise_for_status()
         theirstack_filtered_data = theirstack_response.json()
@@ -34,7 +35,11 @@ def get_theirstack(theirstack_title):
                 "salary_max": job.get("max_annual_salary_usd"),
                 "url": job.get("url"),
                 "date_posted": job.get("date_posted"),
-                "seniority": job.get("seniority")
+                "seniority": job.get("seniority"),
+                "description": job.get("description"),
+                "employment_type": job.get("employment_type"),
+                "skills": job.get("skills"),
+                "company_industry": job.get("industry"),
             })
         return filtered_theirstackjobs
     except Exception as e:

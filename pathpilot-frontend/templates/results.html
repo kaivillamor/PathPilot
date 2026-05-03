@@ -6,6 +6,13 @@
   <div class="container">
     <p class="eyebrow">Live job results</p>
     <h1>Jobs matching a {{ degree }} degree</h1>
+    {% if selected_course_count and selected_course_count > 0 and job_match_mode == "strong" %}
+    <p class="lead narrow">Showing only jobs with at least one skill match from your selected courses.</p>
+    {% elif selected_course_count and selected_course_count > 0 %}
+    <p class="lead narrow">Showing all jobs for this degree. Skill tags still reflect your selected courses.</p>
+    {% else %}
+    <p class="lead narrow">No courses were selected, so results use degree-based matching.</p>
+    {% endif %}
   </div>
 </section>
 
@@ -18,6 +25,63 @@
   </div>
 </section>
 {% else %}
+
+<section class="section">
+  <div class="container">
+    {% if selected_course_count and selected_course_count > 0 %}
+    <div class="panel">
+      {% if job_match_mode == "all" %}
+      <form action="/results" method="get">
+        <input type="hidden" name="degree" value="{{ degree }}" />
+        <input type="hidden" name="institution" value="{{ selected_institution or 'pathpilot_demo' }}" />
+        <input type="hidden" name="job_match_mode" value="strong" />
+        <input type="hidden" name="min_match_score" value="{{ min_match_score or 1 }}" />
+        {% for code in selected_courses or [] %}
+        <input type="hidden" name="courses" value="{{ code }}" />
+        {% endfor %}
+        <button type="submit" class="btn btn-secondary btn-sm">Use course filtering</button>
+      </form>
+      {% else %}
+      <form action="/results" method="get">
+        <input type="hidden" name="degree" value="{{ degree }}" />
+        <input type="hidden" name="institution" value="{{ selected_institution or 'pathpilot_demo' }}" />
+        <input type="hidden" name="job_match_mode" value="all" />
+        <input type="hidden" name="min_match_score" value="{{ min_match_score or 1 }}" />
+        {% for code in selected_courses or [] %}
+        <input type="hidden" name="courses" value="{{ code }}" />
+        {% endfor %}
+        <button type="submit" class="btn btn-secondary btn-sm">Show all jobs</button>
+      </form>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="section-heading">
+      <p class="eyebrow">Course influence</p>
+      <h2>Skill profile from selected courses</h2>
+    </div>
+
+    <div class="panel roadmap-card">
+      {% if plan and plan.skill_profile and plan.skill_profile | length > 0 %}
+      <div class="job-tags">
+        {% for item in plan.skill_profile %}
+        <span class="tag">{{ item.skill }} ({{ item.weight }})</span>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p>No skill profile yet. Select courses on the home page to personalize job relevance.</p>
+      {% endif %}
+      {% if plan and plan.unrecognized_course_codes and plan.unrecognized_course_codes | length > 0 %}
+      <p class="job-meta">
+        Unrecognized course codes:
+        {% for code in plan.unrecognized_course_codes %}
+        {{ code }}{% if not loop.last %}, {% endif %}
+        {% endfor %}
+      </p>
+      {% endif %}
+    </div>
+  </div>
+</section>
 
 <section class="section">
   <div class="container">
@@ -45,18 +109,45 @@
           {% if job.salary_min and job.salary_max %}
           <span class="tag">${{ "{:,.0f}".format(job.salary_min | float) }} – ${{ "{:,.0f}".format(job.salary_max | float) }}</span>
           {% endif %}
+          {% if job.salary_interval %}
+          <span class="tag">{{ job.salary_interval }}</span>
+          {% endif %}
           {% if job.remote %}
           <span class="tag">Remote</span>
+          {% endif %}
+          {% if job.position_schedule %}
+          <span class="tag">{{ job.position_schedule }}</span>
+          {% endif %}
+          {% if job.match_score and job.match_score > 0 %}
+          <span class="tag">Skill match: {{ job.match_score }}</span>
           {% endif %}
           {% if job.applicationclose %}
           <span class="tag tag-muted">Closes {{ job.applicationclose[:10] }}</span>
           {% endif %}
         </div>
+        {% if job.job_summary %}
+        <p class="job-meta">{{ job.job_summary[:260] }}{% if job.job_summary | length > 260 %}...{% endif %}</p>
+        {% elif job.qualification_summary %}
+        <p class="job-meta">{{ job.qualification_summary[:260] }}{% if job.qualification_summary | length > 260 %}...{% endif %}</p>
+        {% endif %}
+        {% if job.matched_skills and job.matched_skills | length > 0 %}
+        <div class="job-tags">
+          {% for skill in job.matched_skills %}
+          <span class="tag tag-muted">{{ skill }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
       </div>
       {% endfor %}
     </div>
     {% else %}
-    <div class="panel"><p>No federal listings found for this degree.</p></div>
+    <div class="panel">
+      {% if job_match_mode == "strong" and selected_course_count and selected_course_count > 0 %}
+      <p>No federal listings matched your selected course skills. Try <strong>Show all jobs</strong>.</p>
+      {% else %}
+      <p>No federal listings found for this degree.</p>
+      {% endif %}
+    </div>
     {% endif %}
   </div>
 </section>
@@ -92,18 +183,40 @@
           {% if job.seniority %}
           <span class="tag">{{ job.seniority | capitalize }}</span>
           {% endif %}
+          {% if job.employment_type %}
+          <span class="tag">{{ job.employment_type }}</span>
+          {% endif %}
           {% if job.remote %}
           <span class="tag">Remote</span>
+          {% endif %}
+          {% if job.match_score and job.match_score > 0 %}
+          <span class="tag">Skill match: {{ job.match_score }}</span>
           {% endif %}
           {% if job.date_posted %}
           <span class="tag tag-muted">Posted {{ job.date_posted }}</span>
           {% endif %}
         </div>
+        {% if job.description %}
+        <p class="job-meta">{{ job.description[:260] }}{% if job.description | length > 260 %}...{% endif %}</p>
+        {% endif %}
+        {% if job.matched_skills and job.matched_skills | length > 0 %}
+        <div class="job-tags">
+          {% for skill in job.matched_skills %}
+          <span class="tag tag-muted">{{ skill }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
       </div>
       {% endfor %}
     </div>
     {% else %}
-    <div class="panel"><p>No private listings found for this degree.</p></div>
+    <div class="panel">
+      {% if job_match_mode == "strong" and selected_course_count and selected_course_count > 0 %}
+      <p>No private listings matched your selected course skills. Try <strong>Show all jobs</strong>.</p>
+      {% else %}
+      <p>No private listings found for this degree.</p>
+      {% endif %}
+    </div>
     {% endif %}
   </div>
 </section>

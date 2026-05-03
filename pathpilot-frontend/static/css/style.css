@@ -143,6 +143,39 @@ a {
   cursor: pointer;
 }
 
+.course-checklist {
+  max-height: 260px;
+  overflow-y: auto;
+  min-width: 320px;
+  width: min(100%, 680px);
+  display: grid;
+  gap: 0.55rem;
+}
+
+.course-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.3rem;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.95rem;
+}
+
+.course-checkbox:last-child {
+  border-bottom: 0;
+}
+
+.course-checkbox input {
+  width: 1rem;
+  height: 1rem;
+}
+
+.course-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
