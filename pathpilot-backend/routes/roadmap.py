@@ -3,6 +3,7 @@ from openai import OpenAI
 from metrics import get_db
 from datetime import datetime
 import os
+import sys
 import json
 
 roadmap_bp = Blueprint("roadmap", __name__)
@@ -35,12 +36,18 @@ def roadmap():
     if year not in VALID_YEARS:
         return jsonify({"error": "Invalid year selected"}), 400
 
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT code, name, required, elective, mathematics FROM courses WHERE degree = %s ORDER BY code", (degree,))
-    courses = cur.fetchall()
-    cur.close()
-    conn.close()
+    # the course catalog is optional, the prompt falls back to generated course
+    # names when it is empty, so a database outage should not fail the request
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("SELECT code, name, required, elective, mathematics FROM courses WHERE degree = %s ORDER BY code", (degree,))
+        courses = cur.fetchall()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        print(f"roadmap: course lookup failed: {e}", file=sys.stderr)
+        courses = []
 
     interests_line = f" with interests in: {interests}" if interests else ""
     required_courses = [f"- {r[0]}: {r[1]}" for r in courses if r[2]]
