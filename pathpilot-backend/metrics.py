@@ -1,12 +1,29 @@
 import psycopg2
 import os
+import sys
 from datetime import datetime
-
-DATABASE_URL = os.getenv("DATABASE_URL")
+from functools import wraps
 
 def get_db():
-    return psycopg2.connect(DATABASE_URL)
+    # read at call time, not import time: load_dotenv() has not necessarily
+    # run yet when this module is first imported
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise RuntimeError("DATABASE_URL is not set")
+    return psycopg2.connect(database_url)
 
+def non_fatal(func):
+    """Metrics are bookkeeping, so a database outage must not take down a request."""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            print(f"metrics: {func.__name__} failed: {e}", file=sys.stderr)
+            return None
+    return wrapper
+
+@non_fatal
 def init_db():
     conn = get_db()
     cur = conn.cursor()
@@ -70,6 +87,7 @@ def init_db():
     cur.close()
     conn.close()
 
+@non_fatal
 def log_request():
     conn = get_db()
     cur = conn.cursor()
@@ -78,6 +96,7 @@ def log_request():
     cur.close()
     conn.close()
 
+@non_fatal
 def log_error(error_source="unknown"):
     conn = get_db()
     cur = conn.cursor()
@@ -86,6 +105,7 @@ def log_error(error_source="unknown"):
     cur.close()
     conn.close()
 
+@non_fatal
 def log_degree_search(degree):
     conn = get_db()
     cur = conn.cursor()
@@ -94,6 +114,7 @@ def log_degree_search(degree):
     cur.close()
     conn.close()
 
+@non_fatal
 def log_response_time(response_time):
     conn = get_db()
     cur = conn.cursor()
