@@ -37,8 +37,9 @@ def metrics():
 # do not change the host (specific to Docker)
 # allows Flask to accept connections from anywhere including Docker's internals.
 
-# defaults to 5000 for docker-compose, Railway injects its own PORT
+# port stays 5000: it is what docker-compose maps and what the Railway service
+# routes to. Railway injects PORT=8080, so do not read it here, the target port
+# would have to be changed in the Railway dashboard to match.
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", "5000"))
     debug = os.getenv("FLASK_DEBUG", "").lower() in ("1", "true", "yes")
-    app.run(debug=debug, host="0.0.0.0", port=port)
+    app.run(debug=debug, host="0.0.0.0", port=5000)
