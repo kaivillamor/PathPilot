@@ -7,6 +7,8 @@ import os
 
 
 app = dash.Dash(__name__)
+# the underlying Flask app, this is what gunicorn serves
+server = app.server
 app.layout = html.Div([
     html.Div([
         html.Div(dcc.Graph(id="response-times-graph"), style={"width": "50%"}),
@@ -30,7 +32,8 @@ BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:5000")
 )
 def update_graphs(n):
     secret = os.getenv("METRICS_SECRET", "")
-    data = requests.get(f"{BACKEND_URL}/metrics", headers={"X-Metrics-Secret": secret}).json()
+    # short, this refreshes every 5s so a slow call should fail and retry
+    data = requests.get(f"{BACKEND_URL}/metrics", headers={"X-Metrics-Secret": secret}, timeout=10).json()
 
     response_times_figure = go.Figure(
         go.Scatter(
@@ -73,5 +76,8 @@ def update_graphs(n):
     return response_times_figure, total_requests_figure, degree_figure, error_count_figure
 
 # note that the port is 8050 as the default for dash
+# only used for local runs, gunicorn serves this in the container.
+# debug must stay off in production: it exposes the Werkzeug console
 if __name__ == "__main__":
-    app.run(debug = True, host = "0.0.0.0", port = 8050)
+    debug = os.getenv("FLASK_DEBUG", "").lower() in ("1", "true", "yes")
+    app.run(debug=debug, host="0.0.0.0", port=8050)

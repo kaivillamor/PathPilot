@@ -8,5 +8,5 @@ COPY . .
 EXPOSE 8050
 RUN adduser --disabled-password --gecos "" appuser
 USER appuser
-# command to run
-CMD ["python", "dashboard.py"]
+# command to run, dashboard:server is the flask app underneath dash
+CMD ["gunicorn", "-b", "0.0.0.0:8050", "-w", "2", "--timeout", "60", "dashboard:server"]
