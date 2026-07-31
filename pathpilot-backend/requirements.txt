@@ -1,6 +1,9 @@
 # web framework for backend
 flask
 
+# production wsgi server, flask's built in one is dev only
+gunicorn
+
 # https requests to usajobs api/theirstack
 requests
 

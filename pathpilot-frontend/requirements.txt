@@ -1,3 +1,5 @@
 flask
 requests
 Flask-Limiter
+# production wsgi server, flask's built in one is dev only
+gunicorn

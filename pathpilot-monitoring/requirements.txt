@@ -1,3 +1,5 @@
 dash
 plotly
 requests
+# production wsgi server, dash's built in one is dev only
+gunicorn

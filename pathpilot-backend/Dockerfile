@@ -8,5 +8,5 @@ COPY . .
 EXPOSE 5000
 RUN adduser --disabled-password --gecos "" appuser
 USER appuser
-# command to run
-CMD ["python", "app.py"]
+# command to run, 2 workers since each request blocks on two external apis
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "-w", "2", "--timeout", "60", "app:app"]
